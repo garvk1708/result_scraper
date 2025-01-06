@@ -27,5 +27,5 @@ You can install the required libraries using the following command:
 pip install requests beautifulsoup4 fake_useragent urllib3
 ```
 
-##Disclaimer
+# Disclaimer
 This script is intended for educational purposes only. It should not be used for malicious activities, scraping sensitive data, or violating any terms of service of websites. Always ensure that you have permission to scrape and interact with websites you target.
