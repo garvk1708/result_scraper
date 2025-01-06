@@ -1,29 +1,32 @@
+"""NITH Result Scraper - A tool to fetch and process student results."""
+
+import csv
+import json
+import random
+import time
+
 import requests
 from bs4 import BeautifulSoup
-import json
-import time
-import csv
-import random
 from urllib3.util.retry import Retry
 from requests.adapters import HTTPAdapter
 
-# Generate roll numbers for a specific year and department
 def generate_roll_numbers(year, department_code):
+    """Generate roll numbers for a specific year and department."""
     return [f'"{year}{department_code}{i:03d}"' for i in range(1, 151)]
 
-# List of all departments
-all_departments = ['BEC', 'BCS', 'DCS', 'DEC', 'BPH', 'BME', 'BCH', 'BMA', 'BMS', 'BCE', 'BEE', 'BAR']
-
-# Pre-defined User-Agents list
-USER_AGENTS = [
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36",
-    "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:85.0) Gecko/20100101 Firefox/85.0",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/91.0.864.54",
+all_departments = [
+    'BEC', 'BCS', 'DCS', 'DEC', 'BPH', 'BME', 'BCH', 'BMA', 'BMS', 'BCE', 'BEE', 'BAR'
 ]
 
-# Create a session with retries
+USER_AGENTS = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/91.0.4472.124",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/89.0.4389.82",
+    "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:85.0) Firefox/85.0",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Edge/91.0.864.54",
+]
+
 def create_session():
+    """Create a session with retry mechanism."""
     session = requests.Session()
     retry = Retry(total=5, backoff_factor=0.5, status_forcelist=[500, 502, 503, 504])
     adapter = HTTPAdapter(max_retries=retry)
@@ -31,31 +34,30 @@ def create_session():
     session.mount('https://', adapter)
     return session
 
-# Fetch result page HTML for a roll number
 def fetch_results(roll_number):
+    """Fetch result page HTML for a roll number."""
     session = create_session()
     year = roll_number[:2]
-    BASE_URL = f"http://results.nith.ac.in/scheme{year}/studentresult/"
-    SUBMIT_URL = f"{BASE_URL}result.asp"
+    base_url = f"http://results.nith.ac.in/scheme{year}/studentresult/"
+    submit_url = f"{base_url}result.asp"
 
     headers = {
         "User-Agent": random.choice(USER_AGENTS),
         "Content-Type": "application/x-www-form-urlencoded",
         "Accept": "text/html,application/xhtml+xml",
-        "Referer": BASE_URL,
-        "Accept-Language": "en-US,en;q=0.9",
-        "Accept-Encoding": "gzip, deflate, br",
+        "Referer": base_url
     }
 
-    data = {"RollNumber": roll_number, "x_vSemID": "1"}
-
-    time.sleep(random.uniform(2, 5))  # Delay between requests
-
     try:
-        response = session.post(SUBMIT_URL, data=data, headers=headers, timeout=15)
+        response = session.post(
+            submit_url, 
+            data={"RollNumber": roll_number, "x_vSemID": "1"},
+            headers=headers,
+            timeout=15
+        )
         return response.text if response.status_code == 200 else None
-    except Exception as e:
-        print(f"Error fetching results for {roll_number}: {e}")
+    except requests.RequestException as err:
+        print(f"Error fetching results for {roll_number}: {err}")
         return None
 
 # Parse result HTML and extract student data
