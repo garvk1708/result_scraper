@@ -1,6 +1,7 @@
 # Roll Number Result Scraper
 
-This Python script is designed to fetch student results from a university's online result portal based on roll numbers and department codes. The results are parsed and saved in a structured JSON format. The script also allows the generation of roll numbers for different departments and years.
+This Python script is designed to fetch student results from NITH's online result portal based on roll numbers.
+The results are parsed and saved in a structured JSON format. The script also allows the generation of roll numbers for different departments and years.
 
 ## Features
 - Generate roll numbers based on the year and department codes.
