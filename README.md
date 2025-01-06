@@ -1,1 +1,26 @@
-# result_scraper
+# Roll Number Result Scraper
+
+This Python script is designed to fetch student results from a university's online result portal based on roll numbers and department codes. The results are parsed and saved in a structured JSON format. The script also allows the generation of roll numbers for different departments and years.
+
+## Features
+- Generate roll numbers based on the year and department codes.
+- Scrape student results from the official university results portal.
+- Parse student information such as name, father’s name, subjects, grades, SGPI, and CGPI.
+- Save scraped data into JSON files and CSV format for easy access.
+- Customizable input for years and departments.
+- Built-in retry logic and random delay between requests for better reliability and to avoid overloading the server.
+- Use of proxy rotation (via a proxy API) and random user-agents to simulate real users.
+
+## Requirements
+
+- Python 3.x
+- Libraries:
+  - `requests`
+  - `beautifulsoup4`
+  - `fake_useragent`
+  - `urllib3`
+  
+You can install the required libraries using the following command:
+
+```bash
+pip install requests beautifulsoup4 fake_useragent urllib3
